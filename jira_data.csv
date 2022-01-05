@@ -1,0 +1,3 @@
+key,summary,desc,type
+RS,Issue is created for api RS ,created using postman api csv,Story
+RA,Issue is created for api RA,created using postman api csv,Bug

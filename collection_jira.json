@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "bb095778-4908-4168-9551-b98d7b6f6150",
+		"name": "Jira Postman Chaining",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create an Issue in Jira CSV",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Step1 verify the status code is 201 \r",
+							"pm.test(\"Validate the status code\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"//step2  parse the response \r",
+							"var json_response= pm.response.json();\r",
+							"// step3 read the sys id from json response \r",
+							"var local_jira_id =json_response.id;\r",
+							"console.log(local_jira_id);\r",
+							"//step4 store it in goloable varibale\r",
+							"pm.globals.set(\"global_jira_id\",local_jira_id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"fields\": {\r\n \"project\":\r\n {\r\n \"key\": \"{{key}}\"\r\n },\r\n \"summary\": \"{{summary}}\",\r\n \"description\": \"{{desc}}\",\r\n \"issuetype\": {\r\n \"name\": \"{{type}}\"\r\n }\r\n }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{jira_host_name}}/rest/api/2/issue/?jql=project=RA",
+					"protocol": "https",
+					"host": [
+						"{{jira_host_name}}"
+					],
+					"path": [
+						"rest",
+						"api",
+						"2",
+						"issue",
+						""
+					],
+					"query": [
+						{
+							"key": "jql",
+							"value": "project=RA"
+						},
+						{
+							"key": "file",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit an Issue in Jira",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Step1 verify the status code is 204\r",
+							"pm.test(\"Validate the status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"fields\": {\r\n\r\n  \"summary\": \"Issue is Update in RA project\",\r\n\r\n \"description\": \"Issue is updated using postman api\"\r\n }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{jira_host_name}}/rest/api/2/issue/{{global_jira_id}}?jql=project=RA&issues=id,key",
+					"protocol": "https",
+					"host": [
+						"{{jira_host_name}}"
+					],
+					"path": [
+						"rest",
+						"api",
+						"2",
+						"issue",
+						"{{global_jira_id}}"
+					],
+					"query": [
+						{
+							"key": "jql",
+							"value": "project=RA"
+						},
+						{
+							"key": "issues",
+							"value": "id,key"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search for issue",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Step1 verify the status code is 200\r",
+							"pm.test(\"Validate the status code\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{jira_host_name}}/rest/api/2/search?jql=project=RA&issues={{global_jira_id}},key",
+					"protocol": "https",
+					"host": [
+						"{{jira_host_name}}"
+					],
+					"path": [
+						"rest",
+						"api",
+						"2",
+						"search"
+					],
+					"query": [
+						{
+							"key": "jql",
+							"value": "project=RA"
+						},
+						{
+							"key": "issues",
+							"value": "{{global_jira_id}},key"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete an Issue in Jira",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Step1 verify the status code is 204\r",
+							"pm.test(\"Validate the status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"fields\": {\r\n\r\n  \"summary\": \"Issue is Update in RA project\",\r\n\r\n \"description\": \"Issue is updated using postman api\"\r\n }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{jira_host_name}}/rest/api/2/issue/{{global_jira_id}}",
+					"protocol": "https",
+					"host": [
+						"{{jira_host_name}}"
+					],
+					"path": [
+						"rest",
+						"api",
+						"2",
+						"issue",
+						"{{global_jira_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "username",
+				"value": "hari.radhakrishnan@testleaf.com",
+				"type": "string"
+			},
+			{
+				"key": "password",
+				"value": "cSRwisPlT7sOVLVjstAM2905",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
